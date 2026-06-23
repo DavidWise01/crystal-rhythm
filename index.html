@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rhythm Section — Crystals & Clocks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#150e21; --ground-2:#1d1430; --surface:#241836; --surface-2:#2c1f42;
+    --edge:#3a2a58; --ink:#ece1f7; --ink-soft:#bfaed6; --ink-mute:#8c7aa6;
+    --violet:#b98bff; --violet-deep:#7c4bd8;
+    --tick:#7fe7ff; --quartz:#ffce5c;
+    --i1:#7fe7ff; --i2:#ff7aa8; --i3:#5eead4; --i4:#ffce5c; --i5:#b98bff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1100px 700px at 80% -10%, rgba(127,231,255,.10), transparent 60%),
+      radial-gradient(900px 600px at 6% 8%, rgba(120,60,180,.16), transparent 55%),
+      var(--ground);
+    color:var(--ink); font-family:"Space Grotesk",system-ui,sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  header{padding:80px 0 30px;}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--tick);margin-bottom:24px;}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(42px,7.4vw,86px);
+    line-height:.97;letter-spacing:-.015em;}
+  h1 em{font-style:italic;color:var(--tick);}
+  .thesis{margin-top:24px;max-width:56ch;font-size:18px;color:var(--ink-soft);}
+  .recap{margin-top:14px;max-width:60ch;font-size:14px;color:var(--ink-mute);
+    border-left:2px solid var(--quartz);padding-left:14px;}
+  .recap b{color:var(--ink-soft);font-weight:500;}
+
+  .hero{margin:30px 0 0;border:1px solid var(--edge);border-radius:18px;overflow:hidden;
+    background:linear-gradient(180deg,var(--surface),var(--ground-2));}
+  .hero canvas{width:100%;height:220px;display:block;}
+  .hero .cap{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.05em;
+    color:var(--ink-mute);padding:8px 22px 16px;}
+  .hero .cap b{color:var(--quartz);}
+
+  section{padding:58px 0 4px;}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:6px;flex-wrap:wrap;}
+  .sec-head h2{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(25px,3.8vw,38px);letter-spacing:-.01em;}
+  .sec-head .tag{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.06em;
+    padding:4px 11px;border-radius:999px;border:1px solid var(--edge);color:var(--ink-soft);}
+  .sec-sub{max-width:76ch;color:var(--ink-soft);margin:4px 0 24px;font-size:16px;}
+  .sec-sub em{color:var(--tick);font-style:normal;}
+
+  /* pipeline */
+  .pipe{border:1px solid var(--edge);border-radius:16px;padding:20px 20px 16px;
+    background:linear-gradient(180deg,var(--surface),var(--ground-2));}
+  .pipe-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;
+    font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--ink-soft);}
+  .clk{display:flex;align-items:center;gap:9px;}
+  .clk .dot{width:13px;height:13px;border-radius:50%;background:var(--tick);
+    box-shadow:0 0 4px var(--tick);transition:none;}
+  .clk b{color:var(--tick);}
+  .pipe-top .ct{color:var(--ink-mute);}
+  .pipe-top .ct b{color:var(--ink);}
+  .stages{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:6px;}
+  .stage{border:1px solid var(--edge);border-radius:10px;padding:9px 6px;text-align:center;
+    font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-mute);
+    background:rgba(0,0,0,.14);}
+  .stage small{display:block;font-size:9px;letter-spacing:.06em;margin-top:3px;color:var(--ink-mute);opacity:.7;}
+  .track{position:relative;height:46px;margin-top:8px;}
+  .tok{position:absolute;top:6px;height:34px;width:54px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;color:#10121a;
+    will-change:transform;box-shadow:0 4px 14px -6px rgba(0,0,0,.6);}
+  .pipe-cap{margin-top:14px;font-size:13.5px;color:var(--ink-soft);}
+  .pipe-cap b{color:var(--tick);font-weight:500;}
+
+  /* domains */
+  .domains{margin-top:22px;border:1px solid var(--edge);border-radius:16px;padding:16px 18px;
+    background:rgba(0,0,0,.12);}
+  .domains svg{width:100%;height:auto;display:block;}
+
+  /* board map */
+  .boardmap{border:1px solid var(--edge);border-radius:16px;overflow:hidden;margin-bottom:26px;
+    background:linear-gradient(180deg,var(--surface),var(--ground-2));}
+  .boardmap svg{width:100%;height:auto;display:block;}
+
+  /* location cards */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(282px,1fr));gap:16px;}
+  .loc{background:linear-gradient(180deg,var(--surface),var(--ground-2));
+    border:1px solid var(--edge);border-radius:14px;padding:16px 17px;
+    transition:transform .25s ease,border-color .25s ease;}
+  .loc:hover{transform:translateY(-3px);border-color:var(--tick);}
+  .loc .freq{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:17px;color:var(--tick);}
+  .loc h3{font-family:"Fraunces",serif;font-weight:500;font-size:18px;margin:2px 0 4px;}
+  .loc .where{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.03em;
+    color:var(--quartz);margin-bottom:9px;}
+  .loc .where::before{content:"⌖ ";}
+  .loc p{font-size:13px;color:var(--ink-soft);line-height:1.5;}
+  .loc p .why{display:block;margin-top:7px;color:var(--ink-mute);}
+  .loc p .why b{color:var(--ink-soft);font-weight:500;}
+
+  .why-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:6px;}
+  .why-item{border:1px solid var(--edge);border-radius:12px;padding:14px 16px;background:rgba(0,0,0,.12);}
+  .why-item h4{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--tick);margin-bottom:6px;}
+  .why-item p{font-size:13px;color:var(--ink-soft);line-height:1.5;}
+
+  footer{margin-top:64px;padding:38px 0 70px;border-top:1px solid var(--edge);
+    color:var(--ink-mute);font-size:13.5px;max-width:80ch;}
+  footer b{color:var(--ink-soft);font-weight:500;}
+  footer em{color:var(--quartz);font-style:normal;}
+  .sig{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;margin-top:22px;color:var(--tick);}
+
+  @media (max-width:760px){header{padding:52px 0 22px;}.hero canvas{height:180px;}.tok{width:46px;font-size:12px;}}
+  @media (prefers-reduced-motion:reduce){.loc{transition:none;}html{scroll-behavior:auto;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Crystals & clocks · field guide · IV</div>
+    <h1>The rhythm <em>section</em></h1>
+    <p class="thesis">Every synchronous chip needs a shared sense of <em>now</em>. A quartz crystal supplies it — one steady tick — and the chip multiplies that tick into the gigahertz beat every flip-flop marches to. It's the one place on the board where timing comes from something physically moving.</p>
+    <p class="recap"><b>From last time:</b> the crystal itself isn't doped — it's piezoelectric quartz, an insulator that vibrates mechanically. The amplifier that keeps it ringing, and all the logic it paces, are the doped silicon. The rhythm is mechanical; the machinery that rides it is semiconductor.</p>
+
+    <div class="hero">
+      <canvas id="metronome"></canvas>
+      <div class="cap"><b>quartz resonates → a clean square clock.</b> A 32.768 kHz part really is a tiny tuning fork; MHz crystals vibrate in shear. Shown slowed by tens of thousands of times — the real fork would blur.</div>
+    </div>
+  </header>
+
+  <section id="step">
+    <div class="sec-head"><h2>Does it step the instructions?</h2><span class="tag">YES — AND NO</span></div>
+    <p class="sec-sub">Short answer: a clock edge is the instant <em>every flip-flop in the chip samples its input and updates at once</em> — so one edge advances the whole machine by one step. In a CPU that means the pipeline shuffles forward: an instruction moves a stage per tick. So yes, the clock sequences instructions. But watch it run — it isn't one instruction per tick.</p>
+
+    <div class="pipe">
+      <div class="pipe-top">
+        <span class="clk"><span class="dot" id="clkdot"></span><b id="clklabel">clock edge</b></span>
+        <span class="ct">cycle <b id="cyc">0</b></span>
+        <span class="ct">in&nbsp;flight <b id="flight">0</b></span>
+        <span class="ct">retired <b id="ret">0</b></span>
+      </div>
+      <div class="stages">
+        <div class="stage">IF<small>fetch</small></div>
+        <div class="stage">ID<small>decode</small></div>
+        <div class="stage">EX<small>execute</small></div>
+        <div class="stage">MEM<small>memory</small></div>
+        <div class="stage">WB<small>write-back</small></div>
+      </div>
+      <div class="track" id="track"></div>
+      <p class="pipe-cap"><b>One enters each tick, five ride at once, one retires each tick.</b> Real cores go further — superscalar designs retire several per cycle, while a cache miss or a divide can stall a slot for many. The clock steps the <em>machine</em>; instructions just ride that stepping, many at a time.</p>
+    </div>
+
+    <div class="domains">
+      <div id="domainsvg"></div>
+    </div>
+    <p class="sec-sub" style="margin-top:18px;">Underneath the stepping sits the real job: <em>synchronization</em>. The shared edge guarantees every signal is read only when it has settled and stopped changing — never caught mid-flip. The crystal doesn't set the speed (the PLL does); it sets how <em>accurate</em> and steady that shared <em>now</em> is.</p>
+  </section>
+
+  <section id="where">
+    <div class="sec-head"><h2>Where they hide</h2><span class="tag">ON THE BOARD</span></div>
+    <p class="sec-sub">A board carries more than one. The main reference is multiplied to feed most on-chip clocks, but any subsystem that must keep its own <em>exact</em> time gets its own resonator.</p>
+    <div class="boardmap"><div id="mapsvg"></div></div>
+    <div class="grid" id="locs"></div>
+  </section>
+
+  <section id="why">
+    <div class="sec-head"><h2>Why not just one?</h2><span class="tag">CLOCK DOMAINS</span></div>
+    <p class="sec-sub">If the crystal is so good, why does a board need several? Because one frequency can't satisfy every subsystem at once.</p>
+    <div class="why-list" id="whylist"></div>
+  </section>
+
+  <footer>
+    <p><b>About the numbers.</b> The frequencies here are typical, not universal — 25 MHz is a common PC reference, but phones and SoCs often start from 19.2 or 24 MHz, and modern chips fold more and more clock generation onto the die (some now ship with fully on-chip oscillators, no external crystal at all). The 32.768 kHz real-time-clock value is exact and near-universal because 2¹⁵ divides straight down to one tick per second.</p>
+    <p style="margin-top:13px;"><b>Crystal vs oscillator vs MEMS.</b> A bare crystal (designator <em>Y</em>, two pins) needs an external amplifier; a packaged oscillator (<em>X</em> or <em>G</em>, a powered 4-pin can) seals the quartz and its driver together. A MEMS oscillator swaps quartz for a micromachined <em>silicon</em> tuning fork — and that resonator usually <em>is</em> doped, to flatten how its stiffness drifts with temperature. So the rhythm source is the one component that can go either way: un-doped quartz, or doped silicon.</p>
+    <div class="sig">Field guide · v1.0 · companion to sheets I–III</div>
+  </footer>
+
+</div>
+
+<script>
+const reduce = (window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches) || false;
+const TAU=Math.PI*2;
+
+/* ============ HERO: quartz tuning fork -> square clock ============ */
+const mc=document.getElementById('metronome');
+const mctx=mc.getContext('2d');
+let mw=0,mh=0,mdpr=1;
+function sizeM(){ mdpr=Math.min(window.devicePixelRatio||1,2); mw=mc.clientWidth; mh=mc.clientHeight;
+  mc.width=mw*mdpr; mc.height=mh*mdpr; mctx.setTransform(mdpr,0,0,mdpr,0,0); }
+function drawHero(now){
+  if(mw!==mc.clientWidth||mh!==mc.clientHeight) sizeM();
+  mctx.clearRect(0,0,mw,mh);
+  const cy=mh*0.52;
+  // ---- tuning fork (left) ----
+  const fx=Math.min(120, mw*0.18);
+  const baseY=cy+54, tipY=cy-58, stemY=baseY+18;
+  const bow = reduce?6:Math.sin(now*0.006)*9;     // tine flex
+  mctx.lineWidth=5; mctx.lineCap='round'; mctx.strokeStyle='#d9c08a';
+  // stem
+  mctx.beginPath(); mctx.moveTo(fx, stemY+18); mctx.lineTo(fx, baseY); mctx.stroke();
+  // left tine (bows left), right tine (bows right)
+  mctx.beginPath(); mctx.moveTo(fx-9,baseY); mctx.quadraticCurveTo(fx-9-bow,(baseY+tipY)/2, fx-9, tipY); mctx.stroke();
+  mctx.beginPath(); mctx.moveTo(fx+9,baseY); mctx.quadraticCurveTo(fx+9+bow,(baseY+tipY)/2, fx+9, tipY); mctx.stroke();
+  // base curve joining tines
+  mctx.beginPath(); mctx.arc(fx,baseY,9,0,Math.PI,false); mctx.stroke();
+  // glow on tips proportional to |bow|
+  const g=Math.abs(bow)/9;
+  mctx.fillStyle=`rgba(255,206,92,${0.25+0.5*g})`;
+  mctx.beginPath(); mctx.arc(fx-9,tipY,4+3*g,0,TAU); mctx.fill();
+  mctx.beginPath(); mctx.arc(fx+9,tipY,4+3*g,0,TAU); mctx.fill();
+  mctx.fillStyle='#8c7aa6'; mctx.font='11px "JetBrains Mono", monospace'; mctx.textAlign='center';
+  mctx.fillText('quartz', fx, baseY+34);
+
+  // ---- arrow ----
+  const ax=fx+34;
+  mctx.strokeStyle='#5a4a78'; mctx.lineWidth=1.6;
+  mctx.beginPath(); mctx.moveTo(ax,cy); mctx.lineTo(ax+26,cy); mctx.stroke();
+  mctx.beginPath(); mctx.moveTo(ax+26,cy); mctx.lineTo(ax+20,cy-4); mctx.lineTo(ax+20,cy+4); mctx.closePath();
+  mctx.fillStyle='#5a4a78'; mctx.fill();
+
+  // ---- square clock (right) ----
+  const x0=ax+34, x1=mw-18, amp=34, period=46;
+  const off = reduce?0:(now*0.06)%period;
+  mctx.strokeStyle='#7fe7ff'; mctx.lineWidth=2.4; mctx.lineJoin='round'; mctx.lineCap='round';
+  mctx.beginPath();
+  let first=true;
+  for(let x=x0; x<=x1; x+=1){
+    const ph=((x+off-x0)%period)/period;
+    const hi = ph<0.5;
+    const y = cy - (hi?amp/2:-amp/2);
+    if(first){ mctx.moveTo(x,y); first=false; } else { mctx.lineTo(x,y); }
+  }
+  mctx.stroke();
+  // edge glow markers (rising edges)
+  mctx.fillStyle='rgba(127,231,255,.9)';
+  for(let x=x0; x<=x1; x+=period){
+    const xe = x - off; if(xe<x0) continue;
+    mctx.beginPath(); mctx.arc(xe, cy-amp/2, 2.6,0,TAU); mctx.fill();
+  }
+  mctx.fillStyle='#8c7aa6'; mctx.textAlign='left';
+  mctx.fillText('clean clock out  →  PLL ×N  →  GHz', x0, cy-amp/2-12);
+}
+
+/* ============ PIPELINE STEPPER ============ */
+const STAGES=5;
+const PAL=['#7fe7ff','#ff7aa8','#5eead4','#ffce5c','#b98bff'];
+const track=document.getElementById('track');
+const clkdot=document.getElementById('clkdot');
+const cycEl=document.getElementById('cyc'), flEl=document.getElementById('flight'), retEl=document.getElementById('ret');
+let insns=[], nextId=1, cycle=0, retired=0, clkPulse=0;
+const elMap=new Map();
+
+function colX(stage){
+  const W=track.clientWidth||600;
+  const colW=W/STAGES;
+  return colW*stage + colW/2 - 27;   // token width 54
+}
+function tick(){
+  cycle++;
+  // advance & retire
+  insns.forEach(o=>o.stage++);
+  const keep=[];
+  insns.forEach(o=>{
+    if(o.stage>=STAGES){ retired++; const el=elMap.get(o.id); if(el){el.remove();} elMap.delete(o.id); }
+    else keep.push(o);
+  });
+  insns=keep;
+  // spawn new at IF
+  const o={id:nextId++, stage:0, x:colX(0)-40, color:PAL[(nextId)%PAL.length]};
+  insns.push(o);
+  clkPulse=1;
+}
+function ensureEl(o){
+  let el=elMap.get(o.id);
+  if(!el){
+    el=document.createElement('div'); el.className='tok';
+    el.textContent='I'+o.id; el.style.background=o.color;
+    track.appendChild(el); elMap.set(o.id,el);
+    o.x=colX(o.stage)-40;
+  }
+  return el;
+}
+function renderPipe(){
+  insns.forEach(o=>{
+    const el=ensureEl(o);
+    const target=colX(o.stage);
+    o.x += (target-o.x)* (reduce?1:0.2);
+    el.style.transform='translateX('+o.x.toFixed(1)+'px)';
+  });
+  cycEl.textContent=cycle; flEl.textContent=insns.length; retEl.textContent=retired;
+  clkPulse*= reduce?1:0.9;
+  const s=0.85+0.9*clkPulse;
+  clkdot.style.transform='scale('+s.toFixed(2)+')';
+  clkdot.style.boxShadow=`0 0 ${(4+14*clkPulse).toFixed(0)}px var(--tick)`;
+}
+
+/* ============ domains tree (static svg) ============ */
+function domains(){
+  const svg=`<svg viewBox="0 0 720 150" preserveAspectRatio="xMidYMid meet" font-family="JetBrains Mono, monospace">
+   <g fill="none" stroke="#3a2a58" stroke-width="1.5">
+     <!-- crystal -->
+     <path stroke="#ffce5c" d="M40 70 H64 M84 70 H108 M64 56 V84 M84 56 V84 M68 60 H80 V80 H68 Z"/>
+     <text x="44" y="104" fill="#ffce5c" font-size="11" stroke="none">25 MHz</text>
+     <path d="M108 70 H170"/>
+     <rect x="170" y="52" width="78" height="36" rx="6" stroke="#7fe7ff"/>
+     <text x="209" y="74" fill="#7fe7ff" font-size="12" text-anchor="middle" stroke="none">PLL ×N</text>
+     <path d="M248 70 H300"/>
+     <circle cx="300" cy="70" r="3.5" fill="#7fe7ff" stroke="none"/>
+   </g>
+   <g font-size="11" fill="#bfaed6" stroke="none" font-family="JetBrains Mono, monospace">
+     <g fill="none" stroke="#3a2a58" stroke-width="1.5">
+       <path d="M300 70 C340 70 340 24 380 24"/>
+       <path d="M300 70 C340 70 340 52 380 52"/>
+       <path d="M300 70 C340 70 340 88 380 88"/>
+       <path d="M300 70 C340 70 340 122 380 122"/>
+     </g>
+     <text x="388" y="28">core      → 3.0 GHz   (×120)</text>
+     <text x="388" y="56">memory    → 1.6 GHz</text>
+     <text x="388" y="92">PCIe/bus  → 100 MHz</text>
+     <text x="388" y="126">USB       → 48 MHz</text>
+   </g>
+   <text x="40" y="138" fill="#8c7aa6" font-size="10.5" font-family="JetBrains Mono, monospace">one slow tick, fanned out and multiplied into every clock domain</text>
+  </svg>`;
+  document.getElementById('domainsvg').innerHTML=svg;
+}
+domains();
+
+/* ============ board map (static svg) ============ */
+function boardmap(){
+  const flag=(x,y,f)=>`<g font-family="JetBrains Mono, monospace">
+     <rect x="${x-5}" y="${y-5}" width="10" height="10" rx="1.5" fill="none" stroke="#ffce5c" stroke-width="1.5"/>
+     <path d="M${x} ${y-5} V${y-16}" stroke="#ffce5c" stroke-width="1.2"/>
+     <text x="${x+8}" y="${y-10}" fill="#ffce5c" font-size="10">${f}</text></g>`;
+  const lbl=(x,y,t)=>`<text x="${x}" y="${y}" fill="#8c7aa6" font-size="10.5" font-family="JetBrains Mono, monospace">${t}</text>`;
+  const svg=`<svg viewBox="0 0 720 360" preserveAspectRatio="xMidYMid meet">
+    <rect x="14" y="14" width="692" height="332" rx="14" fill="rgba(127,231,255,.03)" stroke="#3a2a58"/>
+    <!-- CPU socket -->
+    <rect x="250" y="60" width="170" height="150" rx="8" fill="rgba(124,75,216,.10)" stroke="#7c4bd8"/>
+    ${lbl(286,140,'CPU socket')}
+    <!-- VRM strip -->
+    <rect x="250" y="30" width="170" height="20" rx="4" fill="none" stroke="#3a2a58"/>${lbl(300,45,'VRM')}
+    <!-- PCH / chipset -->
+    <rect x="470" y="150" width="120" height="110" rx="8" fill="rgba(124,75,216,.08)" stroke="#7c4bd8"/>${lbl(492,210,'chipset / PCH')}
+    <!-- RTC + battery -->
+    <circle cx="630" cy="120" r="20" fill="none" stroke="#3a2a58"/>${lbl(606,150,'coin cell')}
+    <!-- rear I/O -->
+    <rect x="40" y="40" width="150" height="80" rx="6" fill="none" stroke="#3a2a58"/>${lbl(58,86,'rear I/O · audio')}
+    <!-- LAN -->
+    <rect x="40" y="150" width="110" height="60" rx="6" fill="none" stroke="#3a2a58"/>${lbl(58,184,'LAN')}
+    <!-- PCIe slots -->
+    <rect x="120" y="250" width="430" height="14" rx="3" fill="none" stroke="#3a2a58"/>
+    <rect x="120" y="276" width="360" height="14" rx="3" fill="none" stroke="#3a2a58"/>${lbl(120,308,'PCIe slots')}
+    <!-- crystal flags -->
+    ${flag(500,150,'25 MHz · system ref')}
+    ${flag(630,108,'32.768 kHz · RTC')}
+    ${flag(150,52,'audio xtal')}
+    ${flag(150,162,'25 MHz · LAN')}
+    ${flag(440,250,'100 MHz · PCIe genclk')}
+    ${flag(255,60,'main clock gen')}
+  </svg>`;
+  document.getElementById('mapsvg').innerHTML=svg;
+}
+boardmap();
+
+/* ============ location + why cards ============ */
+const LOCS=[
+ {freq:"25 MHz", name:"System reference", where:"by the clock generator / PCH",
+  what:"The master tick the PLLs fan out to the CPU core, the bus, and the chipset link.",
+  why:"It's the one source most other on-chip clocks are multiplied up from."},
+ {freq:"32.768 kHz", name:"Real-time clock", where:"right next to the coin cell",
+  what:"The calendar — date and time, kept running with the PC switched off.",
+  why:"2¹⁵ Hz divides cleanly to exactly 1 Hz, and it sips microwatts so the battery lasts years."},
+ {freq:"24 / 48 MHz", name:"USB reference", where:"near the USB host controller",
+  what:"Packet and frame timing for the USB ports.",
+  why:"USB's data rates derive from these specific values; it wants its own clean source."},
+ {freq:"25 MHz", name:"Ethernet PHY", where:"by the LAN chip and RJ-45",
+  what:"The network line rate in and out of the wire.",
+  why:"The PHY needs its own reference locked to the link speed, isolated from logic noise."},
+ {freq:"24.576 / 11.2896 MHz", name:"Audio codec", where:"by the codec, away from switching noise",
+  what:"The sample clock the DAC/ADC convert against.",
+  why:"Must be an exact integer multiple of 48 kHz or 44.1 kHz — unreachable cleanly from 25 MHz."},
+ {freq:"100 MHz", name:"PCIe reference", where:"clock-generator IC near the slots",
+  what:"The differential reference for PCIe and graphics lanes.",
+  why:"Low-jitter and often spread-spectrum for EMI — kept well away from timekeeping clocks."},
+ {freq:"can · any", name:"Packaged oscillator", where:"wherever stability is critical",
+  what:"A sealed quartz-plus-driver (XO / TCXO / OCXO) giving a finished clock on one pin.",
+  why:"Temperature compensation or an oven holds frequency far tighter than a bare crystal."}
+];
+document.getElementById('locs').innerHTML = LOCS.map(l=>`
+  <div class="loc">
+    <div class="freq">${l.freq}</div>
+    <h3>${l.name}</h3>
+    <div class="where">${l.where}</div>
+    <p>${l.what}<span class="why"><b>Why its own:</b> ${l.why}</span></p>
+  </div>`).join('');
+
+const WHY=[
+ {h:"Exact ratios", p:"Audio sample clocks must be whole-number multiples of 44.1 or 48 kHz. No integer multiplier turns 25 MHz into those cleanly, so audio brings its own crystal."},
+ {h:"Jitter isolation", p:"High-speed serial links — PCIe, USB, SATA — need a low-jitter reference. Separate clock trees keep noisy logic clocks from smearing the clean ones."},
+ {h:"Spread spectrum", p:"Display and PCIe clocks are deliberately wobbled a little to spread their emissions and pass EMI tests. You never want that wobble on a clock used to keep time."},
+ {h:"Power domains", p:"The real-time clock must tick while everything else is off, on coin-cell power. That forces a separate, ultra-low-power oscillator that never sleeps."}
+];
+document.getElementById('whylist').innerHTML = WHY.map(w=>`
+  <div class="why-item"><h4>${w.h}</h4><p>${w.p}</p></div>`).join('');
+
+/* ============ run loops ============ */
+function startPipe(){
+  if(reduce){
+    // static: prefill one instruction per stage
+    for(let i=0;i<STAGES;i++){ insns.push({id:nextId++, stage:STAGES-1-i, x:colX(STAGES-1-i), color:PAL[i%PAL.length]}); }
+    cycle=STAGES; retired=0;
+    renderPipe();
+    return;
+  }
+  let last=performance.now(), acc=0; const period=1300;
+  function loop(now){
+    const dt=now-last; last=now; acc+=dt;
+    if(acc>=period){ tick(); acc-=period; }
+    renderPipe();
+    requestAnimationFrame(loop);
+  }
+  // warm up a couple so the pipe isn't empty
+  tick(); tick(); tick();
+  requestAnimationFrame(loop);
+}
+
+if(reduce){
+  sizeM(); drawHero(0); startPipe();
+}else{
+  function heroLoop(now){ drawHero(now); requestAnimationFrame(heroLoop); }
+  sizeM(); requestAnimationFrame(heroLoop);
+  startPipe();
+}
+window.addEventListener('resize', ()=>{ sizeM(); if(reduce) drawHero(0); });
+</script>
+</body>
+</html>
