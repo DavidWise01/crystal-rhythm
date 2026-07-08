@@ -4,6 +4,6 @@ slug  : crystal-rhythm
 seal  : f5ebe7ad709a46d1591bc08a1a3e36d8e66ddde9fdf267a18aa17533351097bc
 prev  : 63241db70d653e67d7cbb10ab4f56ff6801d322d99bbb85e3535f8d00d4cf7b9
 link  : bfcbcbb0aa8e358e222cf8e3c48c72666be234a8d4266d655552fda378a48dc1
-head  : 3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90
+head  : 13f9ace173ef2e60af38912ba329b4afcb5a38b84a0e4495e8d30327f8c99cc2
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
